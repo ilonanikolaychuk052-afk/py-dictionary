@@ -2,9 +2,10 @@ from typing import Any
 
 
 class Node:
-    def __init__(self, key: Any, value: Any) -> None:
+    def __init__(self, key: Any, value: Any, key_hash: Any) -> None:
         self.key = key
         self.value = value
+        self.key_hash = key_hash
 
 
 class Dictionary:
@@ -20,6 +21,7 @@ class Dictionary:
     def __setitem__(self, key: Any, value: Any) -> None:
         key_hash = hash(key)
         index = self._index(key_hash)
+        node = Node(key, value, key_hash)
         node = self.data[index]
 
         while node and node.key != key:
@@ -27,7 +29,7 @@ class Dictionary:
             node = self.data[index]
 
         if node is None:
-            self.data[index] = Node(key, value)
+            self.data[index] = Node(key, value, key_hash)
             self.size += 1
         else:
             node.value = value
@@ -46,7 +48,7 @@ class Dictionary:
 
         if node:
             return node.value
-        raise KeyError(key)
+        raise KeyError(f"Key '{key}' not found")
 
     def __len__(self) -> int:
         return self.size
